@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سوبرمان — الهاوي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@700;800&family=Cairo:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-theme="superman">
+
+<header class="topbar">
+  <a href="../index.html" class="brand" aria-label="Alhawi home">
+    <span class="brand-mark" id="brandText"></span>
+  </a>
+  <nav class="topnav" aria-label="Heroes" id="topNav">
+    <a href="../batman/index.html" id="navBatman"></a>
+    <a href="../spiderman/index.html" id="navSpiderman"></a>
+    <a href="../superman/index.html" id="navSuperman"></a>
+    <button class="lang-toggle" id="langToggle" type="button"></button>
+  </nav>
+</header>
+
+<main id="app" role="main">
+
+  <div class="hub-head">
+    <p class="kicker" id="kicker"></p>
+    <h2 id="heroName"></h2>
+    <p id="heroIntro"></p>
+  </div>
+
+  <div class="game-grid" id="gameGrid"></div>
+
+  <p class="hub-teaser" id="hubTeaser"></p>
+
+  <div class="panel game-stage" id="gameStage" hidden>
+    <div class="game-head">
+      <button class="backlink" id="closeGame" type="button"></button>
+      <h2 id="gameTitle"></h2>
+    </div>
+    <div class="stage-body" id="gameMount"></div>
+  </div>
+
+</main>
+
+<footer class="sitefoot">
+  <p id="siteFooter"></p>
+</footer>
+
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
