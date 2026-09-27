@@ -24,7 +24,7 @@ var GAMES = {
 var DICT = {
   ar: {
     dir:"rtl", htmlLang:"ar",
-    brand:"الهاوي",
+    brand:"الحاوي",
     nav:{ batman:"باتمان", spiderman:"سبايدرمان", superman:"سوبرمان" },
     langToggle:"English",
     heroNames:{ batman:"باتمان", spiderman:"سبايدرمان", superman:"سوبرمان" },
