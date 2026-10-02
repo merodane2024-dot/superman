@@ -99,8 +99,17 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
 }
 .topnav a:hover{border-color:var(--gold);transform:translateY(-1px);}
 .topnav a.is-active{border-color:var(--gold);background:var(--accent-soft);}
-.topnav a.locked{opacity:.78;}
-.topnav a.locked:hover{opacity:1;}
+.topnav a.locked{
+  background:var(--gold);
+  color:var(--ink);
+  border-color:var(--ink);
+  font-weight:800;
+  opacity:1;
+}
+.topnav a.locked:hover{
+  transform:translateY(-1px);
+  box-shadow:2px 2px 0 var(--ink);
+}
 
 /* ============================================================
    Layout shell
@@ -119,6 +128,15 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
   color:#B8AF98;
   opacity:.7;
 }
+.footer-shop{
+  display:inline-block;
+  margin-top:8px;
+  font-size:14px;
+  font-weight:800;
+  color:var(--gold);
+  opacity:1;
+}
+.footer-shop:hover{text-decoration:underline;}
 
 .panel{
   background:var(--paper);
@@ -325,12 +343,17 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{
   border:3px solid var(--ink);border-radius:10px;overflow:hidden;
   box-shadow:var(--shadow-off) var(--ink);touch-action:none;
   background-color:#FFFFFF;
-  background-image:
-    linear-gradient(rgba(20,22,27,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(20,22,27,0.06) 1px, transparent 1px);
-  background-size:22px 22px;
 }
 .coloring-canvas-holder canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;}
+.coloring-canvas-holder .coloring-overlay{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:contain;
+  pointer-events:none;
+  mix-blend-mode:multiply;
+  -webkit-user-drag:none;
+  user-select:none;
+}
+.coloring-caption{font-size:13.5px;font-weight:700;opacity:.85;text-align:center;margin:0;}
 .palette{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:360px;}
 .swatch{width:30px;height:30px;border-radius:50%;border:3px solid var(--ink);cursor:pointer;padding:0;}
 .swatch.active{outline:3px solid var(--gold);outline-offset:2px;}
