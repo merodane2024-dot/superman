@@ -6,16 +6,16 @@
 
 var PART = "superman";
 var PART_ORDER = 3;
-var NEXT_PART = null; // last part -> reward links back to home
+var NEXT_PART = null; // last part -> reward shows only the shop button
 var SHOP_LINK = "https://alhawi-stock.com/products/superheros-1785011909-588";
 
 /* Which image each game uses on this page, and the order shown */
 var GAME_ORDER = ["coloring","puzzle","scratch","memory"];
 var GAMES = {
-  coloring: { type:"coloring", image:"assets/3.jpg" },
-  puzzle:  { type:"puzzle",  image:"assets/1.jpg" },
-  scratch: { type:"scratch", image:"assets/2.jpg" },
-  memory:  { type:"memory",  images:["assets/1_thumb.jpg","assets/2_thumb.jpg","assets/3_thumb.jpg","assets/4_thumb.jpg","assets/5_thumb.jpg"] }
+  coloring: { type:"coloring", image:"assets/coloring-lineart.png" },
+  puzzle:   { type:"puzzle",   image:"assets/1.jpg" },
+  scratch:  { type:"scratch",  image:"assets/2.jpg" },
+  memory:   { type:"memory",   images:["assets/1_thumb.jpg","assets/2_thumb.jpg","assets/3_thumb.jpg","assets/4_thumb.jpg","assets/5_thumb.jpg"] }
 };
 
 /* ---------------------------------------------------------
@@ -35,7 +35,7 @@ var DICT = {
     },
     kicker:"العالم {n} من 3",
     gameMeta:{
-      coloring:{ title:"استوديو التلوين", icon:"🖌️", desc:"شاهد الصورة، ثم ارسم ولوّن نسختك الخاصة." },
+      coloring:{ title:"استوديو التلوين", icon:"🖌️", desc:"لوّن صفحة البطل بالألوان اللي تحبها." },
       puzzle:{ title:"لغز القطع", icon:"🧩", desc:"بدّل القطع لإعادة تركيب الصورة." },
       scratch:{ title:"اكشط واكتشف", icon:"✨", desc:"اكشط البطاقة لتكشف الصورة." },
       memory:{ title:"لعبة الذاكرة", icon:"🃏", desc:"اقلب البطاقات وابحث عن كل زوج." }
@@ -54,6 +54,7 @@ var DICT = {
       pairsLabel:"الأزواج",
       memoryWinToast:"وجدت كل الأزواج! ذاكرة رائعة! 🧠",
       referenceCaption:"شاهد هذه الصورة، ثم ارسمها بأسلوبك!",
+      coloringCaption:"لوّن الرسمة بالألوان اللي تحبها 🎨",
       brushLabel:"الفرشاة",
       eraserLabel:"ممحاة",
       clearPage:"امسح الصفحة",
@@ -70,7 +71,8 @@ var DICT = {
       nextWorldBtn:"العالم التالي: {name} ←",
       homeBtn:"↺ العودة للصفحة الرئيسية"
     },
-    footer:"الهاوي — العب الألعاب، وافتح الأبطال."
+    footer:"الهاوي — العب الألعاب، وافتح الأبطال.",
+    footerShop:"🛍️ تسوّق الآن على Alhawi Store"
   },
   en: {
     dir:"ltr", htmlLang:"en",
@@ -85,7 +87,7 @@ var DICT = {
     },
     kicker:"World {n} of 3",
     gameMeta:{
-      coloring:{ title:"Coloring Studio", icon:"🖌️", desc:"Look at the photo, then draw and color your own version." },
+      coloring:{ title:"Coloring Studio", icon:"🖌️", desc:"Color in the hero's page with any colors you like." },
       puzzle:{ title:"Tile Puzzle", icon:"🧩", desc:"Swap the tiles to rebuild the picture." },
       scratch:{ title:"Scratch & Reveal", icon:"✨", desc:"Scratch the card to reveal the photo." },
       memory:{ title:"Memory Match", icon:"🃏", desc:"Flip the cards and find every pair." }
@@ -104,6 +106,7 @@ var DICT = {
       pairsLabel:"Pairs",
       memoryWinToast:"All matched! Amazing memory! 🧠",
       referenceCaption:"Look at this, then draw it your way!",
+      coloringCaption:"Color the picture with any colors you like 🎨",
       brushLabel:"Brush",
       eraserLabel:"Eraser",
       clearPage:"Clear page",
@@ -120,7 +123,8 @@ var DICT = {
       nextWorldBtn:"Next world: {name} →",
       homeBtn:"↺ Back to Alhawi home"
     },
-    footer:"Alhawi — play the games, unlock the heroes."
+    footer:"Alhawi — play the games, unlock the heroes.",
+    footerShop:"🛍️ Shop now at Alhawi Store"
   }
 };
 
@@ -175,20 +179,17 @@ function revealReward(container){
   var actions = el("div","reward-actions");
 
   var shopBtn = el("a","btn btn-lg", d.reward.shopBtn);
-  shopBtn.href = "https://alhawi-stock.com";
+  shopBtn.href = SHOP_LINK;
   shopBtn.target = "_blank";
   shopBtn.rel = "noopener";
   actions.appendChild(shopBtn);
 
-  var nextBtn = el("a","btn btn-ghost");
   if(NEXT_PART){
+    var nextBtn = el("a","btn btn-ghost");
     nextBtn.textContent = d.reward.nextWorldBtn.replace("{name}", d.heroNames[NEXT_PART]);
     nextBtn.href = "../"+NEXT_PART+"/index.html";
-  } else {
-    nextBtn.textContent = d.reward.homeBtn;
-    nextBtn.href = "../index.html";
+    actions.appendChild(nextBtn);
   }
-  actions.appendChild(nextBtn);
 
   copy.appendChild(actions);
   box.appendChild(copy);
@@ -422,23 +423,29 @@ function mountMemory(stage, images){
 }
 
 /* ==========================================================
-   GAME ENGINE — Coloring: reference photo + blank sketch page
+   GAME ENGINE — Coloring: real line-art coloring page.
+   A color canvas sits underneath; the line-art image sits on
+   top with mix-blend-mode:multiply so white stays transparent
+   and the black outline always shows through the colors.
    ========================================================== */
-function mountColoring(stage, referenceImageSrc){
+function mountColoring(stage, lineArtSrc){
   stage.innerHTML = "";
   var d = t();
   var wrap = el("div","coloring-wrap");
 
-  var refBox = el("div","ref-box");
-  var refImg = el("img"); refImg.src = referenceImageSrc; refImg.alt = d.engine.referenceCaption;
-  refBox.appendChild(refImg);
-  refBox.appendChild(el("span",null,d.engine.referenceCaption));
-
   var col = el("div","coloring-canvas-col");
   var holder = el("div","coloring-canvas-holder");
   var canvas = el("canvas");
+  var overlay = el("img","coloring-overlay");
+  overlay.src = lineArtSrc;
+  overlay.alt = "";
+  overlay.draggable = false;
   holder.appendChild(canvas);
+  holder.appendChild(overlay);
   col.appendChild(holder);
+
+  var caption = el("p","coloring-caption", d.engine.coloringCaption);
+  col.appendChild(caption);
 
   var W=360, H=450;
   canvas.width=W; canvas.height=H;
@@ -493,6 +500,14 @@ function mountColoring(stage, referenceImageSrc){
       octx.fillStyle = "#ffffff";
       octx.fillRect(0,0,W,H);
       octx.drawImage(canvas,0,0);
+      if(overlay.complete){
+        var ow = overlay.naturalWidth || W, oh = overlay.naturalHeight || H;
+        var s = Math.min(W/ow, H/oh);
+        var dw = ow*s, dh = oh*s, dx = (W-dw)/2, dy = (H-dh)/2;
+        octx.globalCompositeOperation = "multiply";
+        octx.drawImage(overlay, dx, dy, dw, dh);
+        octx.globalCompositeOperation = "source-over";
+      }
       var url = out.toDataURL("image/png");
       var a = document.createElement("a");
       a.href = url; a.download = "alhawi-coloring.png";
@@ -512,7 +527,6 @@ function mountColoring(stage, referenceImageSrc){
   col.appendChild(palette);
   col.appendChild(toolRow);
 
-  wrap.appendChild(refBox);
   wrap.appendChild(col);
   stage.appendChild(wrap);
 
@@ -572,6 +586,9 @@ function renderHub(){
   teaserEl.textContent = d.hubTeaser;
   closeBtn.textContent = d.backToGames;
   document.getElementById("siteFooter").textContent = d.footer;
+  var shopLinkEl = document.getElementById("siteShopLink");
+  shopLinkEl.textContent = d.footerShop;
+  shopLinkEl.href = SHOP_LINK;
 
   grid.innerHTML = "";
   GAME_ORDER.forEach(function(key){
