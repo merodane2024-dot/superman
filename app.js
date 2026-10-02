@@ -160,6 +160,31 @@ function el(tag, cls, html){
   return e;
 }
 
+/* Deals a shuffled memory deck, reshuffling (a few extra passes each
+   time) until no identical pair ends up directly next to each other
+   — horizontally or vertically — in either grid layout the CSS uses
+   (5 columns on wide screens, 3 on narrow ones). This makes shuffles
+   consistently feel well-mixed instead of occasionally looking "easy"
+   purely by chance. */
+function hasAdjacentPair(deck, cols){
+  for(var i=0;i<deck.length;i++){
+    var col = i % cols;
+    if(col < cols-1 && deck[i+1] && deck[i+1].src === deck[i].src) return true;
+    var below = i + cols;
+    if(below < deck.length && deck[below].src === deck[i].src) return true;
+  }
+  return false;
+}
+function dealMemoryDeck(images){
+  var deck, attempts = 0;
+  do{
+    deck = images.concat(images).map(function(src,i){ return {src:src, uid:i}; });
+    shuffle(deck); shuffle(deck); shuffle(deck);
+    attempts++;
+  } while(attempts < 2000 && (hasAdjacentPair(deck,5) || hasAdjacentPair(deck,3)));
+  return deck;
+}
+
 /* ---------------------------------------------------------
    Reward block — shown inline once a game is finished
    --------------------------------------------------------- */
@@ -368,8 +393,7 @@ function mountMemory(stage, images){
   stats.appendChild(movesEl); stats.appendChild(pairsEl);
   stage.appendChild(stats);
 
-  var deck = images.concat(images).map(function(src,i){ return {src:src, uid:i}; });
-  shuffle(deck);
+  var deck = dealMemoryDeck(images);
 
   var board = el("div","memory-board");
   stage.appendChild(board);
